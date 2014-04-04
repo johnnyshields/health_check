@@ -1,34 +1,43 @@
 ENV['RAILS_ENV'] = 'test'
 
-require 'test/unit'
+# rails test help
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+$LOAD_PATH.unshift(File.dirname(__FILE__))
+
+require 'minitest/autorun'
 require 'rubygems'
 
 # Tests are conducted with health_test as a plugin
 environment_file = File.join(File.dirname(__FILE__), '..', '..', '..', '..', 'config', 'environment.rb')
-if File.exists?(environment_file)
-  # test as plugin
+
+if File.exists?(environment_file) # test as plugin
+
   require environment_file
+  require File.join(File.dirname(__FILE__), '..', 'init')
+
 else
-  #tests as gem
-  fail "TODO: Work out how to test as a gem (test as a plugin instead)"
+# elsif Rails.version >= '3.0' #tests as gem
+  require File.expand_path("../dummy/config/environment.rb",  __FILE__)
+
+# else
+#   fail "Testing as a gem not supported on Rails < 3.0. Please test as a plugin instead."
+
 end
 
-gem "shoulda"
+require 'rails/test_help'
 require 'shoulda'
-require 'shoulda/action_controller'
 
-# rails test help
+Rails.application.routes.routes.map do |route|
+  puts route.path.spec.to_s
+end
 
-$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
-$LOAD_PATH.unshift(File.dirname(__FILE__))
+# ActiveSupport::TestCase.class_eval do
+#   include Shoulda::Context::Assertions
+#   include Shoulda::Context::InstanceMethods
+# end
+# ActiveSupport::TestCase.extend(Shoulda::Context::ClassMethods)
 
-# gem init
-#require 'health_check'
-
-# plugin init
-require File.join(File.dirname(__FILE__), '..', 'init')
-
-ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :dbfile => ":memory:", :database => 'health_test_test')
+ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :dbfile => ":memory:", :database => 'health_check_test')
 
 EXAMPLE_SMTP_SETTINGS = {
   :address => "smtp.gmail.com",
@@ -65,4 +74,3 @@ def teardown_db
     ActiveRecord::Base.connection.drop_table(table)
   end
 end
-

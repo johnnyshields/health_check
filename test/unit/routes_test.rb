@@ -1,15 +1,11 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
-class RoutingTest < Test::Unit::TestCase
+class RoutingTest < Minitest::Unit::TestCase
 
   def setup
-    if defined?(Rails) and defined?(Rails.application) and Rails.application.routes
+    if defined?(Rails) and defined?(Rails.application) and (Rails.application < '3.0') and Rails.application.routes
       Rails.application.routes.draw do |map|
-	 # do nothing - routes should be added automatically
-      end
-    else
-      ActionController::Routing::Routes.draw do |map|
-	 # do nothing - routes should be added automatically
+        # do nothing - routes should be added automatically
       end
     end
   end
@@ -31,8 +27,6 @@ class RoutingTest < Test::Unit::TestCase
   def assert_recognition(method, path, options)
     if defined?(Rails) and defined?(Rails.application) and Rails.application.routes
       result = Rails.application.routes.recognize_path(path, :method => method)
-    else
-      result = ActionController::Routing::Routes.recognize_path(path, :method => method)
     end
     assert_equal options, result
   end

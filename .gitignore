@@ -39,6 +39,8 @@ tmtags
 ## PROJECT::SPECIFIC
 bin/
 test/bin/
+test/dummy/log/
+test/dummy/health_check_test
 railsapps/
 test/*.gemfile.lock
 ,*
