@@ -3,11 +3,9 @@
 
 module HealthCheck
 
-  if Rails.version >= '3.0'
-    class Engine < Rails::Engine
-      cattr_accessor :routes_manually_defined
-    end
-  end
+  # Determines the route at which the engine will be mounted (Rails 3.0+)
+  mattr_accessor :mount_at
+  self.mount_at = "health_check"
 
   # Text output upon success
   mattr_accessor :success
@@ -41,13 +39,13 @@ module HealthCheck
 
 end
 
-require "health_check/version"
+require 'health_check/version'
 require 'health_check/utils'
-require 'health_check/health_check_controller'
 
-if defined?(HealthCheck::Engine)
-  require 'health_check/health_check_routes'
+if Rails.version >= '3.0'
+  require 'health_check/engine'
 else
+  require '../app/controllers/health_check/health_check_controller'
   require 'health_check/add_23_routes'
 end
 
